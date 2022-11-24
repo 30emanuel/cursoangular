@@ -1,6 +1,8 @@
 <p>cursos works!</p>
+<p>{{ pagina }}</p>
 <div>
     <a *ngFor='let curso of cursos' [routerLink]="['/curso', curso.id]">
         {{ curso.nome }} <br>
     </a>
 </div>
+<button (click)="proximaPagina()">Proxima</button>
