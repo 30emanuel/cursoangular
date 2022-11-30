@@ -13,6 +13,7 @@ import { HomeComponent } from './home/home.component';
 
 import { CursosModule } from './cursos/cursos.module';
 import { AppRoutingModule } from './app.routing.module';
+import { AlunosModule } from './alunos/alunos.module';
 
 
 
@@ -27,6 +28,7 @@ import { AppRoutingModule } from './app.routing.module';
     //AppRoutingModule,
     BrowserAnimationsModule,
     CursosModule,
+    AlunosModule,
     AppRoutingModule
   ],
   providers: [],
