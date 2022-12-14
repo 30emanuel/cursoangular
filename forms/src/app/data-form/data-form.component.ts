@@ -1,4 +1,7 @@
+import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { map } from 'rxjs';
 
 @Component({
   selector: 'app-data-form',
@@ -7,9 +10,60 @@ import { Component, OnInit } from '@angular/core';
 })
 export class DataFormComponent implements OnInit {
 
-  constructor() { }
+  formulario!: FormGroup;
+
+  constructor(
+    private formBuilder: FormBuilder,
+    private http: HttpClient
+    ) { }
 
   ngOnInit(): void {
+    /*this.formulario = new FormGroup({
+      nome: new FormControl(null),
+      email: new FormControl(null)
+    })*/
+
+    this.formulario = this.formBuilder.group({
+      nome: [null, Validators.required],
+      email: [null, [Validators.required, Validators.email]]
+
+      //[Validators.required, Validators.minLength(3), Validators.maxLength(20)]
+    })
+  }
+
+  onSubmit(){
+    console.log(this.formulario.value)
+
+    this.http.post('https://httpbin.org/post', JSON.stringify(this.formulario.value))
+    .pipe(map((dados: any) => dados))
+    .subscribe(dados => { 
+      console.log(dados)
+      // reseta o form
+      //this.formulario.reset()
+      this.resetar()
+    },
+    (error:any) => alert('error'))
+  }
+
+  resetar(){
+    this.formulario.reset()
+  }
+
+  verificaValidTouched(campo: any){
+    return !this.formulario.controls[campo].valid && this.formulario.controls[campo].touched
+  }
+
+  verificaEmailInvalido(){
+    let campoEmail = this.formulario.get('email')
+    if(campoEmail?.errors){
+      return campoEmail?.errors['email'] && campoEmail.touched
+    } 
+  }
+
+  aplicaCssErro(campo: any){
+    return {
+      'erro': this.verificaValidTouched(campo),
+    }
   }
 
 }

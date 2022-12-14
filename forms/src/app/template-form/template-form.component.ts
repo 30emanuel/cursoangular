@@ -17,7 +17,12 @@ export class TemplateFormComponent implements OnInit {
   onSubmit(form: any){
     console.log(form.value)
     
-    this.http.post('https://httpbin.org/post', JSON.stringify(form.value)).pipe(map(res => res)).subscribe(dados => console.log(dados))
+    this.http.post('https://httpbin.org/post', JSON.stringify(form.value))
+    .pipe(map((dados: any) => dados))
+    .subscribe(dados => { 
+      console.log(dados)
+      form.form.reset()
+    })
   }
 
   constructor(private http: HttpClient) { }
