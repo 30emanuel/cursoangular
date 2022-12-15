@@ -1,3 +1,6 @@
 .erro{
     color: red;
 }
+.erro input{
+    border-color: red;
+}

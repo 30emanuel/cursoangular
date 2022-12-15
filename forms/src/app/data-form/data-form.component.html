@@ -21,6 +21,64 @@
             </app-campo-control-erro> 
         </div>
     </div>
+    <div formGroupName="endereco">
+        <div class="form-group" >
+            <div class="col-md-3">
+                <label for="cep" class="control-label">CEP</label>
+                <input type="text" class="form-control" id="cep" formControlName="cep" (blur)="consultaCep()">
+                <!--<app-campo-control-erro 
+                [mostrarErro]="verificaValidTouched('endereco.cep')" msgErro="CEP é obrigatorio.">
+                </app-campo-control-erro>-->
+            </div>
+            <div class="col-md-3">
+                <label for="numero" class="control-label">Numero</label>
+                <input type="text" class="form-control" id="numero" formControlName="numero">
+                <!--<app-campo-control-erro
+                [mostrarErro]="verificaValidTouched('endereco.numero')" msgErro="Numero é obrigatorio.">
+                </app-campo-control-erro>-->
+            </div>
+            <div class="col-md-6">
+                <label for="complemento" class="control-label">Complemento</label>
+                <input type="text" class="form-control" id="complemento" formControlName="complemento">
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-sm-12">
+                <label for="rua">Rua</label>
+            </div>
+            <div class="col-sm-12">
+                <input type="text" class="form-control" id="rua" name="rua" formControlName="rua">
+                <!--<app-campo-control-erro
+                [mostrarErro]="verificaValidTouched('endereco.rua')" msgErro="Rua é obrigatorio.">
+                </app-campo-control-erro>-->
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-md-5">
+                <label for="bairro" class="control-label">Bairro</label>
+                <input type="text" class="form-control" id="bairro" name="bairro" formControlName="bairro">
+                <!--<app-campo-control-erro
+                [mostrarErro]="verificaValidTouched('endereco.bairro')" msgErro="Bairro é obrigatorio.">
+                </app-campo-control-erro>-->
+            </div>
+            <div class="col-md-4">
+                <label for="cidade" class="control-label">Cidade</label>
+                <input type="text" class="form-control" id="cidade" name="cidade" formControlName="cidade">
+                <!--<app-campo-control-erro
+                [mostrarErro]="verificaValidTouched('endereco.cidade')" msgErro="Cidade é obrigatorio.">
+                </app-campo-control-erro>-->
+            </div>
+            <div class="col-md-3">
+                <label for="estado" class="control-label">Estado</label>
+                <select class="form-control" id="estado" name="estado" formControlName="estado">
+                    <option *ngFor="let estado of estados | async" [value]="estado.sigla">{{estado.nome}}</option>
+                </select>
+                <!--<app-campo-control-erro
+                [mostrarErro]="verificaValidTouched('endereco.estado')" msgErro="Estado é obrigatorio.">
+                </app-campo-control-erro>-->
+            </div>
+        </div>
+    </div>
     <button type="submit" class="btn btn-primary">Submit</button>
     <button type="button" class="btn" (click)="resetar()">Cancelar</button>
     <app-form-debug [form]="formulario"></app-form-debug>
