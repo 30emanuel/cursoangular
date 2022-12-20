@@ -2,9 +2,11 @@ import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { map, Observable } from 'rxjs';
+import { FormValidations } from '../shared/form-validator';
 import { EstadoBr } from '../shared/models/estado-br.model';
 import { ConsultaCepService } from '../shared/services/consulta-cep.service';
 import { DropdownService } from '../shared/services/dropdown.service';
+import { VerificaEmailService } from './services/verifica-email.service';
 
 @Component({
   selector: 'app-data-form',
@@ -18,15 +20,19 @@ export class DataFormComponent implements OnInit {
   cargos!: any[]
   tecnologias!: any[]
   newsLetterOp!: any[]
+  frameworks = ['Angular', 'React','Vue']
 
   constructor(
     private formBuilder: FormBuilder,
     private http: HttpClient,
     private dropDownService: DropdownService,
-    private cepService: ConsultaCepService
+    private cepService: ConsultaCepService,
+    private verificarEmailService: VerificaEmailService
     ) { }
 
   ngOnInit(): void {
+    //this.verificarEmailService.verificaEmail('email@email.com').subscribe()
+
     /*this.formulario = new FormGroup({
       nome: new FormControl(null),
       email: new FormControl(null)
@@ -45,9 +51,10 @@ export class DataFormComponent implements OnInit {
 
     this.formulario = this.formBuilder.group({
       nome: [null, Validators.required],
-      email: [null, [Validators.required, Validators.email]],
+      email: [null, [Validators.required, Validators.email], [this.validarEmail.bind(this)]],
+      confirmarEmail: [null, [FormValidations.equalsTo('email')]],
       endereco: this.formBuilder.group({
-        cep: [null, Validators.required],
+        cep: [null, [Validators.required, FormValidations.cepValidator]],
         numero: [null, Validators.required],
         complemento: [null],
         rua: [null, Validators.required],
@@ -58,16 +65,38 @@ export class DataFormComponent implements OnInit {
       cargo: [null],
       tecnologias: [null],
       newsLetter: ['s'],
-      termos: [null, Validators.pattern('true')]
+      termos: [null, Validators.pattern('true')],
+      frameworks: this.buildFrameworks()
       //[Validators.required, Validators.minLength(3), Validators.maxLength(20)]
     })
+  }
+
+  buildFrameworks(){
+    const values = this.frameworks.map(v => new FormControl(false))
+    return this.formBuilder.array(values, FormValidations.minSelectedCheckboxes(1))
+    
+    /*return [
+      new FormControl(false),
+      new FormControl(false),
+      new FormControl(false)
+    ]*/
   }
 
   onSubmit(){
     console.log(this.formulario.value)
 
+    let valueSubmit = Object.assign({}, this.formulario.value)
+
+    valueSubmit = Object.assign(valueSubmit,{
+      frameworks: valueSubmit.frameworks
+      .map((v:any, i:any) => v ? this.frameworks[i] : null)
+      .filter((v: null) => v !== null)
+    })
+
+    console.log(valueSubmit)
+
     if(this.formulario.valid){
-      this.http.post('https://httpbin.org/post', JSON.stringify(this.formulario.value))
+      this.http.post('https://httpbin.org/post', JSON.stringify(valueSubmit))
       .pipe(map((dados: any) => dados))
       .subscribe(dados => { 
         console.log(dados)
@@ -101,6 +130,13 @@ export class DataFormComponent implements OnInit {
 
   verificaValidTouched(campo: string){
     return !this.formulario.controls[campo].valid && this.formulario.controls[campo].touched
+  }
+
+  verificaRequired(campo: string){
+    return(
+      this.formulario.get(campo)?.hasError('required') &&
+      (this.formulario.get(campo)?.touched || this.formulario.get(campo)?.dirty)
+    )
   }
 
   verificaEmailInvalido(){
@@ -162,6 +198,11 @@ export class DataFormComponent implements OnInit {
 
   setarTecnologia(){
     this.formulario.get('tecnologias')?.setValue(['java', 'javascript', 'php'])
+  }
+
+  validarEmail(formControl: FormControl){
+    return this.verificarEmailService.verificaEmail(formControl.value)
+    .pipe(map(emailExiste => emailExiste ? { emailInvalido : true } : null))
   }
 
 }
