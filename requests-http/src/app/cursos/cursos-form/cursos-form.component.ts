@@ -1,10 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AlertModalService } from 'src/app/shared/alert-modal.service';
-import { CursosService } from '../cursos.service';
 import { Location } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
-import { map, switchMap } from 'rxjs';
+import { Cursos2Service } from '../cursos2.service';
 
 @Component({
   selector: 'app-cursos-form',
@@ -18,7 +17,7 @@ export class CursosFormComponent implements OnInit {
 
   constructor(
     private formBuilder: FormBuilder,
-    private service: CursosService,
+    private service: Cursos2Service,
     private modal: AlertModalService,
     private location: Location,
     private route: ActivatedRoute
@@ -55,15 +54,22 @@ export class CursosFormComponent implements OnInit {
   onSubmit(){
     this.submitted = true
     console.log(this.form.value)
+
     if(this.form.valid){
-      console.log('submit')
-      this.service.create(this.form.value).subscribe(
+      let msgSuccess = 'Curso criado com sucesso.'
+      let msgError = 'Erro ao criar curso, tente novamente.'
+      if(this.form.value.id){
+        msgSuccess = 'Curso atualizado com sucesso.'
+        msgError = 'Erro ao atualizar curso, tente novamente.'
+      }
+      this.service.save(this.form.value).subscribe(
         success => {
-          this.modal.showAlertSuccess('Curso criado com sucesso.')
+          this.modal.showAlertSuccess(msgSuccess)
           this.location.back()
         },
-        error => this.modal.showAlertDanger('Erro ao criar curso, tente novamente.'),
-        () => console.log('request completo')
+        error => {
+          this.modal.showAlertDanger(msgError)
+        }
       )
     }
   }
