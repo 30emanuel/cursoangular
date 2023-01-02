@@ -1,0 +1,14 @@
+{
+  "projects": {
+    "default": "curso-angular-emanuel"
+  },
+  "targets": {
+    "curso-angular-emanuel": {
+      "hosting": {
+        "requests-http": [
+          "curso-angular-emanuel"
+        ]
+      }
+    }
+  }
+}
